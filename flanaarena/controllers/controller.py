@@ -10,14 +10,14 @@ import websockets.sync.client
 
 import constants
 from models.champion import Champion
-from qt.widgets.central_widget import CentralWidget
+from qt.windows import MainWindow
 from services import champion_fetcher, lcu
-from windows_api import windows
 
 
 class Controller:
-    def __init__(self, gui: CentralWidget) -> None:
-        self._gui = gui
+    def __init__(self, window: MainWindow) -> None:
+        self._window = window
+        self._gui = window.central_widget
         self._champions: dict[int, Champion] = {}
         self._current_champion_id: int | None = None
         self._champions_loaded_event = threading.Event()
@@ -82,9 +82,12 @@ class Controller:
             if constants.LCU_CHAMPION_SELECTED_URI_PART in uri:
                 if event_data and event_data['selectionStatus']['selectedByMe']:
                     self._update_champion(event_data['id'])
-            elif uri in {constants.LCU_GAMEFLOW_PHASE_URI, constants.LCU_UX_STATE_URI}:
-                if event_data == 'ChampSelect' or isinstance(event_data, dict) and event_data['state'] == 'ShowMain':
-                    windows.force_foreground(self._gui.window().winId())
+            elif uri == constants.LCU_UX_STATE_URI:
+                if event_data and event_data['state'] == 'ShowMain':
+                    self._window.force_foreground()
+            elif uri == constants.LCU_GAMEFLOW_PHASE_URI:
+                if event_data == 'ChampSelect':
+                    self._window.force_foreground()
             elif uri == constants.LCU_UPDATED_MISSIONS_URI:
                 if event_type == 'Update':
                     self._update_missions_count()

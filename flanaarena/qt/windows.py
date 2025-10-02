@@ -2,6 +2,7 @@ from PySide6 import QtCore, QtGui, QtWidgets
 
 import constants
 from qt.widgets.central_widget import CentralWidget
+from windows_api import windows
 
 
 class MovableWindow:
@@ -57,3 +58,6 @@ class MainWindow(MovableWindow, QtWidgets.QMainWindow):
 
         self.central_widget = CentralWidget(self)
         self.setCentralWidget(self.central_widget)
+
+    def force_foreground(self) -> None:
+        windows.force_foreground(self.winId())

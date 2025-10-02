@@ -10,7 +10,7 @@ app = QtWidgets.QApplication()
 
 window = MainWindow()
 
-controller = Controller(window.central_widget)
+controller = Controller(window)
 controller.load()
 
 window.show()
