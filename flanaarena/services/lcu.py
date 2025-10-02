@@ -14,7 +14,7 @@ _port: int | None = None
 
 
 def accept_game() -> None:
-    port, basic_auth_password = wait_for_league_credentials()
+    port, basic_auth_password = wait_for_credentials()
     requests.post(
         constants.LCU_ACCEPT_ENDPOINT_TEMPLATE.format(port),
         auth=(constants.LCU_BASIC_AUTH_USER, basic_auth_password),
@@ -23,7 +23,7 @@ def accept_game() -> None:
 
 
 def fetch_missions_count() -> dict[int, int]:
-    port, basic_auth_password = wait_for_league_credentials()
+    port, basic_auth_password = wait_for_credentials()
 
     missions_count = {}
 
@@ -56,21 +56,21 @@ def fetch_missions_count() -> dict[int, int]:
     return missions_count
 
 
-def wait_for_league_credentials() -> tuple[int, str]:
+def get_process() -> psutil.Process | None:
+    for process in psutil.process_iter(['name', 'cmdline']):
+        if process.info['name'] == constants.LOL_PROCESS_NAME:
+            return process
+
+
+def wait_for_credentials() -> tuple[int, str]:
     global _basic_auth_password, _port
 
     with _credentials_lock:
         if not _basic_auth_password:
-            while True:
-                for proc in psutil.process_iter(['name', 'cmdline']):
-                    if proc.info['name'] == constants.LOL_PROCESS_NAME:
-                        cmdline = ' '.join(proc.info['cmdline'])
-                        break
-                else:
-                    time.sleep(constants.LOL_PROCESS_SLEEP)
-                    continue
-                break
+            while not (process := get_process()):
+                time.sleep(constants.LOL_PROCESS_SLEEP)
 
+            cmdline = ' '.join(process.info['cmdline'])
             _basic_auth_password = constants.LCU_PASSWORD_REGEX_PATTERN.search(cmdline).group(1)
             _port = constants.LCU_PORT_REGEX_PATTERN.search(cmdline).group(1)
 

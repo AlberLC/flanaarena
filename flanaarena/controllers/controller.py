@@ -12,6 +12,7 @@ import constants
 from models.champion import Champion
 from qt.widgets.central_widget import CentralWidget
 from services import champion_fetcher, lcu
+from windows_api import windows
 
 
 class Controller:
@@ -39,7 +40,7 @@ class Controller:
         self._gui.loaded_signal.emit()
 
     def _run_socket_listener(self) -> None:
-        port, basic_auth_password = lcu.wait_for_league_credentials()
+        port, basic_auth_password = lcu.wait_for_credentials()
 
         lcu_basic_auth_token = base64.b64encode(
             f'{constants.LCU_BASIC_AUTH_USER}:{basic_auth_password}'.encode()
@@ -78,16 +79,22 @@ class Controller:
             event_type = message_data['eventType']
             uri = message_data['uri']
 
-            if constants.LCU_CHAMPION_SELECTION_URI_PART in uri:
+            if constants.LCU_CHAMPION_SELECTED_URI_PART in uri:
                 if event_data and event_data['selectionStatus']['selectedByMe']:
                     self._update_champion(event_data['id'])
+            elif uri == constants.LCU_UX_STATE_URI:
+                if event_data and event_data['state'] == 'ShowMain':
+                    windows.force_foreground(self._gui.window().winId())
+            elif uri == constants.LCU_GAMEFLOW_PHASE_URI:
+                if event_data == 'ChampSelect':
+                    windows.force_foreground(self._gui.window().winId())
             elif uri == constants.LCU_UPDATED_MISSIONS_URI:
                 if event_type == 'Update':
                     self._update_missions_count()
-            elif uri == constants.LCU_SELECTED_CHAMPION:
+            elif uri == constants.LCU_ASSIGNED_CHAMPION_URI:
                 if event_data and (lol_data := event_data.get('lol')) and (champion_id := lol_data['championId']):
                     self._update_champion(int(champion_id))
-            elif uri == constants.LCU_GAME_FOUND_URI:
+            elif uri == constants.LCU_MATCHMAKING_URI:
                 if (
                     self._gui.auto_accept
                     and

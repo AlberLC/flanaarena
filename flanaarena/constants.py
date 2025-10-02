@@ -33,16 +33,18 @@ CHAMPIONS_ENDPOINT = CHAMPIONS_ENDPOINT_TEMPLATE.format(LAST_LOL_VERSION)
 MISSION_RECT_COMPLETE_COLOR = '#969696aa'
 MISSION_RECT_INCOMPLETE_COLOR = '#16b816aa'
 LCU_ACCEPT_ENDPOINT_TEMPLATE = 'https://127.0.0.1:{}/lol-matchmaking/v1/ready-check/accept'
-LCU_CHAMPION_SELECTION_URI_PART = '/lol-champ-select/v1/grid-champions'
-LCU_GAME_FOUND_URI = '/lol-lobby-team-builder/v1/matchmaking'
+LCU_ASSIGNED_CHAMPION_URI = '/lol-chat/v1/me'
+LCU_CHAMPION_SELECTED_URI_PART = '/lol-champ-select/v1/grid-champions'
+LCU_GAMEFLOW_PHASE_URI = '/lol-gameflow/v1/gameflow-phase'
+LCU_MATCHMAKING_URI = '/lol-lobby-team-builder/v1/matchmaking'
 LCU_MISSIONS_ENDPOINT_MAX_IDS = 50
 LCU_MISSIONS_ENDPOINT_TEMPLATE = 'https://127.0.0.1:{port}/lol-cap-missions/v1/getmissions?Ids={ids}'
 LCU_PASSWORD_REGEX_PATTERN = re.compile(r'--remoting-auth-token=(\S+)')
 LCU_PORT_REGEX_PATTERN = re.compile(r'--app-port=(\d+)')
-LCU_SELECTED_CHAMPION = '/lol-chat/v1/me'
 LCU_SOCKET_URL_TEMPLATE = 'wss://127.0.0.1:{}'
 LCU_UPDATE_MISSIONS_COUNT_SLEEP = 10
 LCU_UPDATED_MISSIONS_URI = '/lol-missions/v1/missions'
+LCU_UX_STATE_URI = '/riotclient/ux-state/request'
 
 # Paths
 IS_DEVELOPMENT = not getattr(sys, 'frozen', False) or not hasattr(sys, '_MEIPASS')
