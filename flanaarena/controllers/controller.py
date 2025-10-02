@@ -82,11 +82,8 @@ class Controller:
             if constants.LCU_CHAMPION_SELECTED_URI_PART in uri:
                 if event_data and event_data['selectionStatus']['selectedByMe']:
                     self._update_champion(event_data['id'])
-            elif uri == constants.LCU_UX_STATE_URI:
-                if event_data and event_data['state'] == 'ShowMain':
-                    windows.force_foreground(self._gui.window().winId())
-            elif uri == constants.LCU_GAMEFLOW_PHASE_URI:
-                if event_data == 'ChampSelect':
+            elif uri in {constants.LCU_GAMEFLOW_PHASE_URI, constants.LCU_UX_STATE_URI}:
+                if event_data == 'ChampSelect' or isinstance(event_data, dict) and event_data['state'] == 'ShowMain':
                     windows.force_foreground(self._gui.window().winId())
             elif uri == constants.LCU_UPDATED_MISSIONS_URI:
                 if event_type == 'Update':
