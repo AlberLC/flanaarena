@@ -17,7 +17,7 @@ def _get_hwnd(hwnd: int | HWND | psutil.Process) -> HWND | None:
             return get_hwnd_of_pid(hwnd.info['pid'])
 
 
-def force_foreground(hwnd: int | HWND | psutil.Process) -> None:
+def bring_to_front(hwnd: int | HWND | psutil.Process) -> None:
     if hwnd := _get_hwnd(hwnd):
         flags = win_constants.SWP_NOMOVE | win_constants.SWP_NOSIZE | win_constants.SWP_SHOWWINDOW
         win_constants.SetWindowPos(hwnd, win_constants.HWND_TOPMOST, 0, 0, 0, 0, flags)

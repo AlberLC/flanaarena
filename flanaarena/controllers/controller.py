@@ -84,10 +84,10 @@ class Controller:
                     self._set_champion(event_data['id'])
             elif uri == constants.LCU_UX_STATE_URI:
                 if event_data and event_data['state'] == 'ShowMain':
-                    self._window.force_foreground()
+                    self._window.bring_to_front()
             elif uri == constants.LCU_GAMEFLOW_PHASE_URI:
                 if event_data == 'ChampSelect':
-                    self._window.force_foreground()
+                    self._window.bring_to_front()
             elif uri == constants.LCU_UPDATED_MISSIONS_URI:
                 if event_type == 'Update':
                     self._update_missions_count()

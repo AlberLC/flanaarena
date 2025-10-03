@@ -59,5 +59,5 @@ class MainWindow(MovableWindow, QtWidgets.QMainWindow):
         self.central_widget = CentralWidget(self)
         self.setCentralWidget(self.central_widget)
 
-    def force_foreground(self) -> None:
-        windows.force_foreground(self.winId())
+    def bring_to_front(self) -> None:
+        windows.bring_to_front(self.winId())
