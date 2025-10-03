@@ -81,7 +81,7 @@ class Controller:
 
             if constants.LCU_CHAMPION_SELECTED_URI_PART in uri:
                 if event_data and event_data['selectionStatus']['selectedByMe']:
-                    self._update_champion(event_data['id'])
+                    self._set_champion(event_data['id'])
             elif uri == constants.LCU_UX_STATE_URI:
                 if event_data and event_data['state'] == 'ShowMain':
                     self._window.force_foreground()
@@ -93,7 +93,7 @@ class Controller:
                     self._update_missions_count()
             elif uri == constants.LCU_ASSIGNED_CHAMPION_URI:
                 if event_data and (lol_data := event_data.get('lol')) and (champion_id := lol_data['championId']):
-                    self._update_champion(int(champion_id))
+                    self._set_champion(int(champion_id))
             elif uri == constants.LCU_MATCHMAKING_URI:
                 if (
                     self._gui.auto_accept
@@ -114,9 +114,14 @@ class Controller:
     def _save_config(state: bool) -> None:
         constants.CONFIG_PATH.write_text(json.dumps({'auto_accept': state}))
 
-    def _update_champion(self, champion_id: int) -> None:
+    def _set_champion(self, champion_id: int) -> None:
+        try:
+            champion = self._champions[champion_id]
+        except KeyError:
+            return
+
         self._current_champion_id = champion_id
-        self._gui.update_signal.emit(self._champions[champion_id])
+        self._gui.set_champion_signal.emit(champion)
 
     def _update_missions_count(self) -> None:
         # Socket messages jsut before missions update
@@ -141,7 +146,7 @@ class Controller:
                     self._champions[champion_id].missions_count = champion_missions_count
 
                 if self._current_champion_id:
-                    self._update_champion(self._current_champion_id)
+                    self._set_champion(self._current_champion_id)
 
                 break
 

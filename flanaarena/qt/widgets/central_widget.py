@@ -15,7 +15,7 @@ class CentralWidget(UiWidget):
     check_auto_accept: QtWidgets.QCheckBox
 
     loaded_signal = QtCore.Signal()
-    update_signal = QtCore.Signal(object)
+    set_champion_signal = QtCore.Signal(object)
     close_signal = QtCore.Signal()
 
     def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
@@ -24,14 +24,14 @@ class CentralWidget(UiWidget):
 
         self._loading_movie.frameChanged.connect(self._update_movie_frame)
         self.loaded_signal.connect(self._clear_loading_movie)
-        self.update_signal.connect(self._update_champion)
+        self.set_champion_signal.connect(self._set_champion)
         self.close_signal.connect(self.window().close)
 
     def _clear_loading_movie(self) -> None:
         self._loading_movie.stop()
         self.label_image.clear()
 
-    def _update_champion(self, champion: Champion) -> None:
+    def _set_champion(self, champion: Champion) -> None:
         image = QtGui.QPixmap()
         image.loadFromData(champion.image)
         visuals.draw_mission_indicators(image, champion.missions_count)
