@@ -23,6 +23,8 @@ class Controller:
         self._champions_loaded_event = threading.Event()
         self._lcu_socket_connected_event = threading.Event()
 
+        self._gui.button_clear_borders.clicked.connect(lcu.clear_borders)
+        self._gui.button_clear_tokens.clicked.connect(lcu.clear_tokens)
         self._gui.check_auto_accept.toggled.connect(self._save_config)
 
     def _load_config(self) -> None:
@@ -40,7 +42,7 @@ class Controller:
         self._gui.loaded_signal.emit()
 
     def _run_socket_listener(self) -> None:
-        port, basic_auth_password = lcu.wait_for_credentials()
+        basic_auth_password, port = lcu.wait_for_credentials()
 
         lcu_basic_auth_token = base64.b64encode(
             f'{constants.LCU_BASIC_AUTH_USER}:{basic_auth_password}'.encode()

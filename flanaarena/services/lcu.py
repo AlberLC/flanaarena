@@ -14,7 +14,7 @@ _port: int | None = None
 
 
 def accept_game() -> None:
-    port, basic_auth_password = wait_for_credentials()
+    basic_auth_password, port = wait_for_credentials()
     requests.post(
         constants.LCU_ACCEPT_ENDPOINT_TEMPLATE.format(port),
         auth=(constants.LCU_BASIC_AUTH_USER, basic_auth_password),
@@ -22,8 +22,28 @@ def accept_game() -> None:
     )
 
 
+def clear_borders() -> None:
+    basic_auth_password, port = wait_for_credentials()
+    requests.put(
+        constants.LCU_CLEAR_BORDERS_ENDPOINT_TEMPLATE.format(port),
+        json=constants.LCU_CLEAR_BORDERS_PAYLOAD,
+        auth=(constants.LCU_BASIC_AUTH_USER, basic_auth_password),
+        verify=False
+    )
+
+
+def clear_tokens() -> None:
+    basic_auth_password, port = wait_for_credentials()
+    requests.post(
+        constants.LCU_CLEAR_TOKENS_ENDPOINT_TEMPLATE.format(port),
+        json=constants.LCU_CLEAR_TOKENS_PAYLOAD,
+        auth=(constants.LCU_BASIC_AUTH_USER, basic_auth_password),
+        verify=False
+    )
+
+
 def fetch_missions_count() -> dict[int, int]:
-    port, basic_auth_password = wait_for_credentials()
+    basic_auth_password, port = wait_for_credentials()
 
     missions_count = {}
 
@@ -62,7 +82,7 @@ def get_process() -> psutil.Process | None:
             return process
 
 
-def wait_for_credentials() -> tuple[int, str]:
+def wait_for_credentials() -> tuple[str, int]:
     global _basic_auth_password, _port
 
     with _credentials_lock:
@@ -74,4 +94,4 @@ def wait_for_credentials() -> tuple[int, str]:
             _basic_auth_password = constants.LCU_PASSWORD_REGEX_PATTERN.search(cmdline).group(1)
             _port = constants.LCU_PORT_REGEX_PATTERN.search(cmdline).group(1)
 
-    return _port, _basic_auth_password
+    return _basic_auth_password, _port

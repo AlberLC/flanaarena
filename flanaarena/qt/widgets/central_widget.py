@@ -12,6 +12,9 @@ class CentralWidget(UiWidget):
     label_image: QtWidgets.QLabel
     label_name: QtWidgets.QLabel
 
+    button_clear_borders: QtWidgets.QPushButton
+    button_clear_tokens: QtWidgets.QPushButton
+
     check_auto_accept: QtWidgets.QCheckBox
 
     loaded_signal = QtCore.Signal()
