@@ -12,11 +12,14 @@ class CentralWidget(UiWidget):
     label_image: QtWidgets.QLabel
     label_name: QtWidgets.QLabel
 
-    button_clear_borders: QtWidgets.QPushButton
-    button_clear_tokens: QtWidgets.QPushButton
+    button_profile: QtWidgets.QToolButton
 
     check_auto_accept: QtWidgets.QCheckBox
 
+    horizontal_line_1: QtWidgets.QFrame
+    horizontal_line_2: QtWidgets.QFrame
+
+    show_profile_widgets_signal = QtCore.Signal()
     loaded_signal = QtCore.Signal()
     set_champion_signal = QtCore.Signal(object)
     close_signal = QtCore.Signal()
@@ -24,15 +27,28 @@ class CentralWidget(UiWidget):
     def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
         super().__init__(constants.UI_PATH, parent=parent)
         self._loading_movie = QtGui.QMovie()
+        self._profile_menu = QtWidgets.QMenu(self.button_profile)
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.clear_borders_action = QtGui.QAction('Quitar bordes', self._profile_menu, font=font)
+        self.clear_tokens_action = QtGui.QAction('Quitar símbolos', self._profile_menu, font=font)
+
+        self._profile_menu.addAction(self.clear_borders_action)
+        self._profile_menu.addAction(self.clear_tokens_action)
+        self.button_profile.setMenu(self._profile_menu)
+        self.label_name.hide()
+        self._show_profile_widgets(False)
 
         self._loading_movie.frameChanged.connect(self._update_movie_frame)
-        self.loaded_signal.connect(self._clear_loading_movie)
+        self.show_profile_widgets_signal.connect(lambda: self._show_profile_widgets(True))
+        self.loaded_signal.connect(self._on_loaded)
         self.set_champion_signal.connect(self._set_champion)
         self.close_signal.connect(self.window().close)
 
-    def _clear_loading_movie(self) -> None:
+    def _on_loaded(self) -> None:
         self._loading_movie.stop()
         self.label_image.clear()
+        self.label_name.show()
 
     def _set_champion(self, champion: Champion) -> None:
         image = QtGui.QPixmap()
@@ -43,6 +59,10 @@ class CentralWidget(UiWidget):
         self.label_name.setText(champion.name)
 
         self.window().resize(0, 0)
+
+    def _show_profile_widgets(self, visible: bool) -> None:
+        self.horizontal_line_2.setVisible(visible)
+        self.button_profile.setVisible(visible)
 
     def _update_movie_frame(self) -> None:
         self.label_image.setPixmap(
