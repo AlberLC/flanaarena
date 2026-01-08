@@ -11,10 +11,10 @@ from bidict import bidict
 def get_champion_id_uuid_bidict() -> bidict[int, str] | None:
     js = requests.get(CHAMPION_ID_TO_UUID_ENDPOINT).text
 
-    match = re.search(r'ChampionIdToSeriesUuuidMapping\s*=\s*({.*?})},', js)
+    matches = re.findall(r'ChampionIdToSeriesUuidMapping\s*=\s*({.*?})},', js)
 
-    if match:
-        js_object_text = match.group(1)
+    if matches:
+        js_object_text = matches[-1]
         return bidict(ast.literal_eval(js_object_text))
 
 
