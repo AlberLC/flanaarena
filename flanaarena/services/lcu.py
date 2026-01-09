@@ -8,10 +8,6 @@ import requests
 
 import constants
 
-_basic_auth_password: str | None = None
-_credentials_lock = threading.Lock()
-_port: int | None = None
-
 
 def accept_game() -> None:
     basic_auth_password, port = wait_for_credentials()
@@ -95,3 +91,8 @@ def wait_for_credentials() -> tuple[str, int]:
             _port = constants.LCU_PORT_REGEX_PATTERN.search(cmdline).group(1)
 
     return _basic_auth_password, _port
+
+
+_basic_auth_password: str | None = None
+_credentials_lock = threading.Lock()
+_port: int | None = None
