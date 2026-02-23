@@ -1,8 +1,22 @@
+from collections.abc import Callable
+from pathlib import Path
+
 from PySide6 import QtCore, QtGui, QtWidgets
 
 import constants
-from qt.widgets.central_widget import CentralWidget
-from windows_api import windows
+
+
+class GuiWindow[T](QtWidgets.QMainWindow):
+    def __init__(self, icon_path: str | Path, central_widget_factory: Callable[[], T], *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+        self.icon = QtGui.QIcon(str(icon_path))
+        self.central_widget = central_widget_factory()
+
+        self.setWindowTitle(constants.APP_NAME)
+        self.setWindowIcon(self.icon)
+        # noinspection PyTypeChecker
+        self.setCentralWidget(self.central_widget)
 
 
 class MovableWindow:
@@ -47,17 +61,3 @@ class MovableWindow:
         super().mouseReleaseEvent(event)
         self.is_moving = False
         self.last_position = None
-
-
-class MainWindow(MovableWindow, QtWidgets.QMainWindow):
-    def __init__(self) -> None:
-        super().__init__()
-
-        self.setWindowIcon(QtGui.QIcon(str(constants.LOGO_PATH)))
-        self.setWindowTitle(constants.APP_NAME)
-
-        self.central_widget = CentralWidget(self)
-        self.setCentralWidget(self.central_widget)
-
-    def bring_to_front(self) -> None:
-        windows.bring_to_front(self.winId())

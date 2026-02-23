@@ -19,10 +19,19 @@ def get_champion_id_uuid_bidict() -> bidict[int, str] | None:
 
 
 APP_NAME = 'FlanaArena'
+NORMALIZED_APP_NAME = APP_NAME.lower()
+UPDATER_APP_NAME = 'Updater'
+
 CHAMPION_ID_TO_UUID_ENDPOINT = 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-parties/global/default/rcp-fe-lol-parties.js'
 CHAMPION_ID_UUID_BIDICT = get_champion_id_uuid_bidict()
 CHAMPION_IMAGE_ENDPOINT_TEMPLATE = 'https://ddragon.leagueoflegends.com/cdn/{lol_version}/img/champion/{champion_name}.png'
 CHAMPIONS_ENDPOINT_TEMPLATE = 'https://ddragon.leagueoflegends.com/cdn/{}/data/en_US/champion.json'
+CHUNK_SIZE = 65536
+FLANASERVER_API_HOST = 'flanaserver.duckdns.org'
+FLANASERVER_API_HTTP_BASE_URL = f'https://{FLANASERVER_API_HOST}'
+FLANASERVER_API_DOWNLOAD_ENDPINT = f'{FLANASERVER_API_HTTP_BASE_URL}/{NORMALIZED_APP_NAME}/download'
+FLANASERVER_API_VERSION_ENDPINT = f'{FLANASERVER_API_HTTP_BASE_URL}/{NORMALIZED_APP_NAME}/version'
+FLANASERVER_API_TIMEOUT = (3, 10)
 LCU_BASIC_AUTH_USER = 'riot'
 LOADING_GIFS_SIZE = 128
 LOL_PROCESS_NAME = 'LeagueClientUx.exe'
@@ -54,28 +63,46 @@ LCU_SOCKET_URL_TEMPLATE = f'wss://{LCU_HOST}:{{}}'
 LCU_UPDATE_MISSIONS_COUNT_SLEEP = 10
 LCU_UPDATED_MISSIONS_URI = '/lol-missions/v1/missions'
 LCU_UX_STATE_URI = '/riotclient/ux-state/request'
+PALETTE_HIGHLIGHT_COLOR = (79, 114, 195)
+VERSION = '1.0.0'
 
 # Paths
-IS_DEVELOPMENT = not getattr(sys, 'frozen', False) or not hasattr(sys, '_MEIPASS')
+IS_DEVELOPMENT = not getattr(sys, 'frozen', False)
+SOURCE_PATH = pathlib.Path(__file__).parent
 
-PYTHON_SOURCE_PATH = pathlib.Path(__file__).parent.resolve()
-WORKING_DIRECTORY_PATH = PYTHON_SOURCE_PATH if IS_DEVELOPMENT else PYTHON_SOURCE_PATH.parent
+if IS_DEVELOPMENT:
+    DIST_PATH = SOURCE_PATH.parent / 'dist'
+else:
+    DIST_PATH = SOURCE_PATH.parent.parent.parent
+
+APPS_PATH = DIST_PATH / APP_NAME
+APP_PATH = APPS_PATH / APP_NAME
+UPDATER_APP_PATH = APPS_PATH / UPDATER_APP_NAME
+
+PYINSTALLER_INTERNAL_NAME = '_internal'
+
 if not IS_DEVELOPMENT:
-    os.chdir(WORKING_DIRECTORY_PATH)
-DIST_PATH = WORKING_DIRECTORY_PATH.parent / 'dist' if IS_DEVELOPMENT else WORKING_DIRECTORY_PATH.parent
+    os.chdir(DIST_PATH)
+
+APP_EXE_PATH = (APP_PATH / APP_NAME).with_suffix('.exe')
+APP_MAIN_PATH = SOURCE_PATH / 'main.py'
+UPDATER_APP_EXE_PATH = (UPDATER_APP_PATH / UPDATER_APP_NAME).with_suffix('.exe')
+UPDATER_APP_MAIN_PATH = SOURCE_PATH / f'{UPDATER_APP_NAME.lower()}_main.py'
 
 # Resources
-RESOURCES_PATH = PYTHON_SOURCE_PATH / 'resources'
-CONFIG_PATH = RESOURCES_PATH / 'config.json'
-
+RESOURCES_PATH = SOURCE_PATH / 'resources' if IS_DEVELOPMENT else APP_PATH / PYINSTALLER_INTERNAL_NAME / 'resources'
 # Images
 IMAGES_PATH = RESOURCES_PATH / 'images'
+CLOSE_PATH = IMAGES_PATH / 'close.svg'
 LOGO_PATH = IMAGES_PATH / 'logo.png'
 TICK_PATH = IMAGES_PATH / 'tick.svg'
-
 # Loading gifs
 LOADING_GIFS_PATH = RESOURCES_PATH / 'loading_gifs'
-
 # Uis
 UIS_PATH = RESOURCES_PATH / 'uis'
-UI_PATH = UIS_PATH / 'flanaarena.ui'
+APP_UI_PATH = UIS_PATH / 'flanaarena.ui'
+UPDATER_APP_UI_PATH = UIS_PATH / 'updater.ui'
+# Files
+CONFIG_PATH = RESOURCES_PATH / 'config.json'
+
+SAVABLE_PATHS = (CONFIG_PATH,)

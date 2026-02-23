@@ -3,10 +3,10 @@ import json
 import threading
 import time
 
-import psutil
 import requests
 
 import constants
+from utils import system
 
 
 def accept_game() -> None:
@@ -72,21 +72,15 @@ def fetch_missions_count() -> dict[int, int]:
     return missions_count
 
 
-def get_process() -> psutil.Process | None:
-    for process in psutil.process_iter(['name', 'cmdline']):
-        if process.info['name'] == constants.LOL_PROCESS_NAME:
-            return process
-
-
 def wait_for_credentials() -> tuple[str, int]:
     global _basic_auth_password, _port
 
     with _credentials_lock:
         if not _basic_auth_password:
-            while not (process := get_process()):
+            while not (processes := system.search_processes(constants.LOL_PROCESS_NAME)):
                 time.sleep(constants.LOL_PROCESS_SLEEP)
 
-            cmdline = ' '.join(process.info['cmdline'])
+            cmdline = ' '.join(processes[0].info['cmdline'])
             _basic_auth_password = constants.LCU_PASSWORD_REGEX_PATTERN.search(cmdline).group(1)
             _port = constants.LCU_PORT_REGEX_PATTERN.search(cmdline).group(1)
 

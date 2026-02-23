@@ -4,11 +4,11 @@ from PySide6 import QtCore, QtGui, QtWidgets
 
 import constants
 from models.champion import Champion
-from qt.widgets.ui_widget import UiWidget
+from qt.widgets.bases import UiWidget
 from utils import visuals
 
 
-class CentralWidget(UiWidget):
+class AppCentralWidget(UiWidget):
     label_image: QtWidgets.QLabel
     label_name: QtWidgets.QLabel
 
@@ -25,7 +25,7 @@ class CentralWidget(UiWidget):
     close_signal = QtCore.Signal()
 
     def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
-        super().__init__(constants.UI_PATH, parent=parent)
+        super().__init__(constants.APP_UI_PATH, parent=parent)
         self._loading_movie = QtGui.QMovie()
         self._profile_menu = QtWidgets.QMenu(self.button_profile)
         font = QtGui.QFont()

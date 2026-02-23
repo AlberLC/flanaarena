@@ -1,18 +1,17 @@
 import urllib3
-from PySide6 import QtWidgets
 
-from controllers.controller import Controller
-from qt.windows import MainWindow
+from qt.apps.app import App
+from services import update
 
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-app = QtWidgets.QApplication()
+def main() -> None:
+    if not update.ensure_updated():
+        return
 
-window = MainWindow()
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-controller = Controller(window)
-controller.load()
+    App().exec()
 
-window.show()
 
-app.exec()
+if __name__ == '__main__':
+    main()

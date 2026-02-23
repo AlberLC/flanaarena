@@ -10,14 +10,15 @@ import websockets.sync.client
 
 import constants
 from models.champion import Champion
-from qt.windows import MainWindow
+from qt.apps.bases import GuiApp
 from services import champion_fetcher, lcu
 
 
-class Controller:
-    def __init__(self, window: MainWindow) -> None:
-        self._window = window
-        self._gui = window.central_widget
+class AppController[T: GuiApp]:
+    def __init__(self, app: T) -> None:
+        self._app = app
+        self._window = self._app.window
+        self._gui = self._app.gui
         self._champions: dict[int, Champion] = {}
         self._current_champion_id: int | None = None
         self._champions_loaded_event = threading.Event()
