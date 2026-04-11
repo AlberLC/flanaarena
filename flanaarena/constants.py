@@ -50,7 +50,7 @@ LCU_UPDATE_MISSIONS_COUNT_SLEEP = 10
 LCU_UPDATED_MISSIONS_URI = '/lol-missions/v1/missions'
 LCU_UX_STATE_URI = '/riotclient/ux-state/request'
 PALETTE_HIGHLIGHT_COLOR = (79, 114, 195)
-VERSION = '1.0.0'
+VERSION = '1.0.1'
 
 # Paths
 IS_DEVELOPMENT = not getattr(sys, 'frozen', False)
