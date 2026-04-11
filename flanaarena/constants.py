@@ -1,29 +1,15 @@
-import ast
 import os
 import pathlib
 import re
 import sys
 
 import requests
-from bidict import bidict
-
-
-def get_champion_id_uuid_bidict() -> bidict[int, str] | None:
-    js = requests.get(CHAMPION_ID_TO_UUID_ENDPOINT).text
-
-    matches = re.findall(r'ChampionIdToSeriesUuidMapping\s*=\s*({.*?})},', js)
-
-    if matches:
-        js_object_text = matches[-1]
-        return bidict(ast.literal_eval(js_object_text))
-
 
 APP_NAME = 'FlanaArena'
 NORMALIZED_APP_NAME = APP_NAME.lower()
 UPDATER_APP_NAME = 'Updater'
 
 CHAMPION_ID_TO_UUID_ENDPOINT = 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-parties/global/default/rcp-fe-lol-parties.js'
-CHAMPION_ID_UUID_BIDICT = get_champion_id_uuid_bidict()
 CHAMPION_IMAGE_ENDPOINT_TEMPLATE = 'https://ddragon.leagueoflegends.com/cdn/{lol_version}/img/champion/{champion_name}.png'
 CHAMPIONS_ENDPOINT_TEMPLATE = 'https://ddragon.leagueoflegends.com/cdn/{}/data/en_US/champion.json'
 CHUNK_SIZE = 65536

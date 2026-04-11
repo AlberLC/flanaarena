@@ -1,12 +1,53 @@
+import ast
 import itertools
 import json
+import re
 import threading
 import time
+from collections.abc import Sequence
 
 import requests
+from bidict import bidict
 
 import constants
 from utils import system
+
+
+def _get_champion_id_uuid_bidict() -> bidict[int, str] | None:
+    global _champion_id_uuid_bidict
+
+    with _champion_id_uuid_bidict_lock:
+        if _champion_id_uuid_bidict:
+            return _champion_id_uuid_bidict
+
+        js = requests.get(constants.CHAMPION_ID_TO_UUID_ENDPOINT).text
+        for match in reversed(re.findall(r'ChampionIdToSeriesUuidMapping\s*=\s*({.*?})},', js)):
+            champion_id_uuid_bidict = bidict(ast.literal_eval(match))
+
+            if _get_missions_data((next(iter(champion_id_uuid_bidict.values())),)):
+                _champion_id_uuid_bidict = champion_id_uuid_bidict
+                return _champion_id_uuid_bidict
+
+    return _champion_id_uuid_bidict
+
+
+def _get_missions_data(champion_uuids: Sequence[str]) -> list[dict]:
+    missions_data = []
+
+    basic_auth_password, port = wait_for_credentials()
+
+    response = requests.get(
+        constants.LCU_MISSIONS_ENDPOINT_TEMPLATE.format(port=port, ids=json.dumps(champion_uuids)),
+        auth=(constants.LCU_BASIC_AUTH_USER, basic_auth_password),
+        verify=False
+    )
+
+    try:
+        missions_data = response.json()['series']
+    except KeyError:
+        pass
+
+    return missions_data
 
 
 def accept_game() -> None:
@@ -39,34 +80,21 @@ def clear_tokens() -> None:
 
 
 def fetch_missions_count() -> dict[int, int]:
-    basic_auth_password, port = wait_for_credentials()
-
     missions_count = {}
 
-    champion_uuid_batches = itertools.batched(
-        constants.CHAMPION_ID_UUID_BIDICT.values(),
-        constants.LCU_MISSIONS_ENDPOINT_MAX_IDS
-    )
+    if not (champion_id_uuid_bidict := _get_champion_id_uuid_bidict()):
+        return missions_count
+
+    champion_uuid_batches = itertools.batched(champion_id_uuid_bidict.values(), constants.LCU_MISSIONS_ENDPOINT_MAX_IDS)
     for champion_uuids in champion_uuid_batches:
-        response = requests.get(
-            constants.LCU_MISSIONS_ENDPOINT_TEMPLATE.format(port=port, ids=json.dumps(champion_uuids)),
-            auth=(constants.LCU_BASIC_AUTH_USER, basic_auth_password),
-            verify=False
-        )
-
-        try:
-            missions_data = response.json()['series']
-        except KeyError:
-            return missions_count
-
-        for champion_missions_data in missions_data:
-            champion_id = constants.CHAMPION_ID_UUID_BIDICT.inverse[champion_missions_data['configurationId']]
-
+        for champion_missions_data in _get_missions_data(champion_uuids):
             mission_count = 0
+
             for champion_mission_data in champion_missions_data['missions']:
                 if champion_mission_data['status'] == 'COMPLETED':
                     mission_count += 1
 
+            champion_id = champion_id_uuid_bidict.inverse[champion_missions_data['configurationId']]
             missions_count[champion_id] = mission_count
 
     return missions_count
@@ -76,17 +104,21 @@ def wait_for_credentials() -> tuple[str, int]:
     global _basic_auth_password, _port
 
     with _credentials_lock:
-        if not _basic_auth_password:
-            while not (processes := system.search_processes(constants.LOL_PROCESS_NAME)):
-                time.sleep(constants.LOL_PROCESS_SLEEP)
+        if _basic_auth_password:
+            return _basic_auth_password, _port
 
-            cmdline = ' '.join(processes[0].info['cmdline'])
-            _basic_auth_password = constants.LCU_PASSWORD_REGEX_PATTERN.search(cmdline).group(1)
-            _port = constants.LCU_PORT_REGEX_PATTERN.search(cmdline).group(1)
+        while not (processes := system.search_processes(constants.LOL_PROCESS_NAME)):
+            time.sleep(constants.LOL_PROCESS_SLEEP)
+
+        cmdline = ' '.join(processes[0].info['cmdline'])
+        _basic_auth_password = constants.LCU_PASSWORD_REGEX_PATTERN.search(cmdline).group(1)
+        _port = constants.LCU_PORT_REGEX_PATTERN.search(cmdline).group(1)
 
     return _basic_auth_password, _port
 
 
 _basic_auth_password: str | None = None
+_champion_id_uuid_bidict: bidict[int, str] | None = None
+_champion_id_uuid_bidict_lock = threading.Lock()
 _credentials_lock = threading.Lock()
 _port: int | None = None
