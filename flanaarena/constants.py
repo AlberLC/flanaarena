@@ -39,6 +39,7 @@ LCU_CLEAR_BORDERS_PAYLOAD = {
 }
 LCU_CLEAR_TOKENS_ENDPOINT_TEMPLATE = f'https://{LCU_HOST}:{{}}/lol-challenges/v1/update-player-preferences'
 LCU_CLEAR_TOKENS_PAYLOAD = {'challengeIds': []}
+LCU_CURRENT_SEASON_ENDPOINT_TEMPLATE = f'https://{LCU_HOST}:{{}}/lol-seasons/v1/season/name/a'
 LCU_GAMEFLOW_PHASE_URI = '/lol-gameflow/v1/gameflow-phase'
 LCU_MATCHMAKING_URI = '/lol-lobby-team-builder/v1/matchmaking'
 LCU_MISSIONS_ENDPOINT_MAX_IDS = 50

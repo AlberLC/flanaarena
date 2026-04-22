@@ -5,6 +5,7 @@ import re
 import threading
 import time
 from collections.abc import Sequence
+from typing import Any
 
 import requests
 from bidict import bidict
@@ -21,14 +22,21 @@ def _get_champion_id_uuid_bidict() -> bidict[int, str] | None:
             return _champion_id_uuid_bidict
 
         js = requests.get(constants.CHAMPION_ID_TO_UUID_ENDPOINT).text
-        for match in reversed(re.findall(r'ChampionIdToSeriesUuidMapping\s*=\s*({.*?})},', js)):
-            champion_id_uuid_bidict = bidict(ast.literal_eval(match))
-
-            if _get_missions_data((next(iter(champion_id_uuid_bidict.values())),)):
-                _champion_id_uuid_bidict = champion_id_uuid_bidict
-                return _champion_id_uuid_bidict
+        matched_mappings = re.findall(r'ChampionIdToSeriesUuidMapping\s*=\s*({.*?})},', js)
+        current_split = _get_current_season_data()['metadata']['currentSplit']
+        _champion_id_uuid_bidict = bidict(ast.literal_eval(matched_mappings[current_split - 1]))
 
     return _champion_id_uuid_bidict
+
+
+def _get_current_season_data() -> dict[str, Any]:
+    basic_auth_password, port = wait_for_credentials()
+
+    return requests.get(
+        constants.LCU_CURRENT_SEASON_ENDPOINT_TEMPLATE.format(port),
+        auth=(constants.LCU_BASIC_AUTH_USER, basic_auth_password),
+        verify=False
+    ).json()
 
 
 def _get_missions_data(champion_uuids: Sequence[str]) -> list[dict]:
