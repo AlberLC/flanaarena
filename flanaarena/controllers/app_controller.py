@@ -21,6 +21,7 @@ class AppController[T: GuiApp]:
         self._gui = self._app.gui
         self._champions: dict[int, Champion] = {}
         self._current_champion_id: int | None = None
+        self._was_ryze_selected = False
         self._champions_loaded_event = threading.Event()
         self._lcu_socket_connected_event = threading.Event()
 
@@ -102,12 +103,13 @@ class AppController[T: GuiApp]:
                 if event_data and (lol_data := event_data.get('lol')) and (champion_id := lol_data['championId']):
                     self._set_champion(int(champion_id))
             elif uri == constants.LCU_MATCHMAKING_URI:
+                if not event_data or event_data.get('searchState') != 'Found':
+                    continue
+
+                self._was_ryze_selected = False
+
                 if (
                     self._gui.auto_accept
-                    and
-                    event_data
-                    and
-                    event_data.get('searchState') == 'Found'
                     and
                     (ready_check_data := event_data.get('readyCheck'))
                     and
@@ -120,6 +122,8 @@ class AppController[T: GuiApp]:
                 if (
                     self._gui.auto_ryze
                     and
+                    not self._was_ryze_selected
+                    and
                     event_data
                     and
                     event_data['isSelf']
@@ -128,6 +132,7 @@ class AppController[T: GuiApp]:
                     and
                     not event_data['banIntentChampionId']
                 ):
+                    self._was_ryze_selected = True
                     lcu.select_champion(event_data['cellId'], constants.RYZE_ID)
 
     def _save_config(self) -> None:
