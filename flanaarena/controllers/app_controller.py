@@ -27,6 +27,7 @@ class AppController[T: GuiApp]:
         self._gui.clear_borders_action.triggered.connect(lcu.clear_borders)
         self._gui.clear_tokens_action.triggered.connect(lcu.clear_tokens)
         self._gui.check_auto_accept.toggled.connect(self._save_config)
+        self._gui.check_auto_ryze.toggled.connect(self._save_config)
 
     def _load_config(self) -> None:
         if not constants.CONFIG_PATH.is_file():
@@ -35,6 +36,7 @@ class AppController[T: GuiApp]:
         config = json.loads(constants.CONFIG_PATH.read_text())
 
         self._gui.auto_accept = config.get('auto_accept', True)
+        self._gui.auto_ryze = config.get('auto_ryze', True)
 
     def _fetch_champions(self) -> None:
         self._champions = champion_fetcher.fetch_champions()
@@ -114,10 +116,24 @@ class AppController[T: GuiApp]:
                     ready_check_data['state'] == 'InProgress'
                 ):
                     lcu.accept_game()
+            elif constants.LCU_CHAMPION_SELECT_URI_PART in uri:
+                if (
+                    self._gui.auto_ryze
+                    and
+                    event_data
+                    and
+                    event_data['isSelf']
+                    and
+                    event_data['activeActionType'] == 'ban'
+                    and
+                    not event_data['banIntentChampionId']
+                ):
+                    lcu.select_champion(event_data['cellId'], constants.RYZE_ID)
 
-    @staticmethod
-    def _save_config(state: bool) -> None:
-        constants.CONFIG_PATH.write_text(json.dumps({'auto_accept': state}))
+    def _save_config(self) -> None:
+        constants.CONFIG_PATH.write_text(json.dumps(
+            {'auto_accept': self._gui.auto_accept, 'auto_ryze': self._gui.auto_ryze})
+        )
 
     def _set_champion(self, champion_id: int) -> None:
         try:

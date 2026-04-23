@@ -30,6 +30,7 @@ MISSION_RECT_INCOMPLETE_COLOR = '#16b816aa'
 LCU_HOST = '127.0.0.1'
 LCU_ACCEPT_ENDPOINT_TEMPLATE = f'https://{LCU_HOST}:{{}}/lol-matchmaking/v1/ready-check/accept'
 LCU_ASSIGNED_CHAMPION_URI = '/lol-chat/v1/me'
+LCU_CHAMPION_SELECT_URI_PART = '/lol-champ-select/v1/summoners'
 LCU_CHAMPION_SELECTED_URI_PART = '/lol-champ-select/v1/grid-champions'
 LCU_CLEAR_BORDERS_ENDPOINT_TEMPLATE = f'https://{LCU_HOST}:{{}}/lol-regalia/v2/current-summoner/regalia'
 LCU_CLEAR_BORDERS_PAYLOAD = {
@@ -41,16 +42,18 @@ LCU_CLEAR_TOKENS_ENDPOINT_TEMPLATE = f'https://{LCU_HOST}:{{}}/lol-challenges/v1
 LCU_CLEAR_TOKENS_PAYLOAD = {'challengeIds': []}
 LCU_CURRENT_SEASON_ENDPOINT_TEMPLATE = f'https://{LCU_HOST}:{{}}/lol-seasons/v1/season/name/a'
 LCU_GAMEFLOW_PHASE_URI = '/lol-gameflow/v1/gameflow-phase'
-LCU_MATCHMAKING_URI = '/lol-lobby-team-builder/v1/matchmaking'
+LCU_MATCHMAKING_URI = '/lol-lobby-team-builder/v1/matchmaking'  # same as '/lol-gameflow/v1/session' and checking event_data['phase'] == 'ReadyCheck' but several events earlier
 LCU_MISSIONS_ENDPOINT_MAX_IDS = 50
 LCU_MISSIONS_ENDPOINT_TEMPLATE = f'https://{LCU_HOST}:{{port}}/lol-cap-missions/v1/getmissions?Ids={{ids}}'
 LCU_PASSWORD_REGEX_PATTERN = re.compile(r'--remoting-auth-token=(\S+)')
 LCU_PORT_REGEX_PATTERN = re.compile(r'--app-port=(\d+)')
+LCU_SELECT_CHAMPION_ENDPOINT_TEMPLATE = f'https://{LCU_HOST}:{{port}}/lol-champ-select/v1/session/actions/{{cell_id}}'
 LCU_SOCKET_URL_TEMPLATE = f'wss://{LCU_HOST}:{{}}'
 LCU_UPDATE_MISSIONS_COUNT_SLEEP = 10
 LCU_UPDATED_MISSIONS_URI = '/lol-missions/v1/missions'
 LCU_UX_STATE_URI = '/riotclient/ux-state/request'
 PALETTE_HIGHLIGHT_COLOR = (79, 114, 195)
+RYZE_ID = 13
 VERSION = '1.0.2'
 
 # Paths

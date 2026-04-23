@@ -108,6 +108,16 @@ def fetch_missions_count() -> dict[int, int]:
     return missions_count
 
 
+def select_champion(cell_id: int, champion_id: int) -> None:
+    basic_auth_password, port = wait_for_credentials()
+    requests.patch(
+        constants.LCU_SELECT_CHAMPION_ENDPOINT_TEMPLATE.format(port=port, cell_id=cell_id),
+        json={'championId': champion_id},
+        auth=(constants.LCU_BASIC_AUTH_USER, basic_auth_password),
+        verify=False
+    )
+
+
 def wait_for_credentials() -> tuple[str, int]:
     global _basic_auth_password, _port
 

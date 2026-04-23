@@ -15,6 +15,7 @@ class AppCentralWidget(UiWidget):
     button_profile: QtWidgets.QToolButton
 
     check_auto_accept: QtWidgets.QCheckBox
+    check_auto_ryze: QtWidgets.QCheckBox
 
     horizontal_line_1: QtWidgets.QFrame
     horizontal_line_2: QtWidgets.QFrame
@@ -81,6 +82,14 @@ class AppCentralWidget(UiWidget):
     @auto_accept.setter
     def auto_accept(self, state: bool) -> None:
         self.check_auto_accept.setChecked(state)
+
+    @property
+    def auto_ryze(self) -> bool:
+        return self.check_auto_ryze.isChecked()
+
+    @auto_ryze.setter
+    def auto_ryze(self, state: bool) -> None:
+        self.check_auto_ryze.setChecked(state)
 
     def set_loading_movie(self, gif: str | pathlib.Path) -> None:
         self._loading_movie.setFileName(str(gif))
