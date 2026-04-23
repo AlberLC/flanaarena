@@ -129,7 +129,7 @@ class AppController[T: GuiApp]:
         self._gui.set_champion_signal.emit(champion)
 
     def _update_missions_count(self) -> None:
-        # Socket messages jsut before missions update
+        # Socket messages just before missions update
         # [8,"OnJsonApiEvent",{"data":{"ackRequired":false,"id":"","payload":"{\"version\":362,\"updatedGroups\":[\"a0ed106f-a444-4263-9b6a-f8d0adb9564d\"]}","resource":"cap/progression/v1/notifications/cache/invalidate","service":"cap.progression","timestamp":1758674837048,"version":"1.0"},"eventType":"Create","uri":"/riot-messaging-service/v1/message/cap/progression/v1/notifications/cache/invalidate"}]
         # [8,"OnJsonApiEvent",{"data":{"payload":"{\"deltaEventId\":\"04dd8cd0-98e0-11f0-8ef4-b0e153d01caa\",\"ownerId\":\"198b92e9-a8bc-53e5-82f4-289ca9847eb9\",\"namespace\":\"\",\"updatedMissions\":[\"65304025-c57b-405b-b2ff-95667c6258e1\",\"aa23565b-e1eb-43fe-92f4-62bea88a35d8\"]}","resource":"cap/missions/v1/notifications","service":"cap.missions","timestamp":1758674837055,"version":"1.0.0"},"eventType":"Update","uri":"/lol-cap-missions/v1/invalidatecache"}]
         # [8,"OnJsonApiEvent",{"data":{"ackRequired":false,"id":"","payload":"{\"deltaEventId\":\"04dd8cd0-98e0-11f0-8ef4-b0e153d01caa\",\"ownerId\":\"198b92e9-a8bc-53e5-82f4-289ca9847eb9\",\"namespace\":\"\",\"updatedMissions\":[\"65304025-c57b-405b-b2ff-95667c6258e1\",\"aa23565b-e1eb-43fe-92f4-62bea88a35d8\"]}","resource":"cap/missions/v1/notifications","service":"cap.missions","timestamp":1758674837055,"version":"1.0.0"},"eventType":"Create","uri":"/riot-messaging-service/v1/message/cap/missions/v1/notifications"}]
