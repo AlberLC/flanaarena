@@ -55,8 +55,8 @@ LCU_UPDATED_MISSIONS_URI = '/lol-missions/v1/missions'
 LCU_UX_STATE_URI = '/riotclient/ux-state/request'
 PALETTE_HIGHLIGHT_COLOR = (79, 114, 195)
 RYZE_ID = 13
-VERSION = '1.1.1'
 SEASON_SPLITS = 3
+VERSION = '1.1.2'
 
 # Paths
 IS_DEVELOPMENT = not getattr(sys, 'frozen', False)
