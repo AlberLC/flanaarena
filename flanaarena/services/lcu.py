@@ -23,7 +23,7 @@ def _get_champion_id_uuid_bidict() -> bidict[int, str] | None:
 
         js = requests.get(constants.CHAMPION_ID_TO_UUID_ENDPOINT).text
         matched_mappings = re.findall(r'ChampionIdToSeriesUuidMapping\s*=\s*({.*?})},', js)
-        current_split = _get_current_season_data()['metadata']['currentSplit']
+        current_split = _get_current_season_split()
         _champion_id_uuid_bidict = bidict(ast.literal_eval(matched_mappings[current_split - 1]))
 
     return _champion_id_uuid_bidict
@@ -37,6 +37,16 @@ def _get_current_season_data() -> dict[str, Any]:
         auth=(constants.LCU_BASIC_AUTH_USER, basic_auth_password),
         verify=False
     ).json()
+
+
+def _get_current_season_split() -> int:
+    current_season_data = _get_current_season_data()
+    current_split = current_season_data['metadata']['currentSplit']
+
+    if time.time() * constants.MILLISECONDS_PER_SECOND <= current_season_data['seasonEnd']:
+        return current_split
+    else:
+        return current_split % constants.SEASON_SPLITS + 1
 
 
 def _get_missions_data(champion_uuids: Sequence[str]) -> list[dict]:
