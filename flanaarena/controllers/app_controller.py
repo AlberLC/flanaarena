@@ -82,7 +82,11 @@ class AppController[T: GuiApp]:
                 self._gui.close_signal.emit()
                 break
 
-            message_data = json.loads(message)[2]
+            try:
+                message_data = json.loads(message)[2]
+            except json.decoder.JSONDecodeError:
+                continue
+
             event_data = message_data['data']
             event_type = message_data['eventType']
             uri = message_data['uri']
