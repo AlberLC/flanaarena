@@ -169,7 +169,10 @@ class AppController[T: GuiApp]:
                 pass
             else:
                 for champion_id, champion_missions_count in missions_count.items():
-                    self._champions[champion_id].missions_count = champion_missions_count
+                    try:
+                        self._champions[champion_id].missions_count = champion_missions_count
+                    except KeyError:
+                        pass
 
                 if self._current_champion_id:
                     self._set_champion(self._current_champion_id)
