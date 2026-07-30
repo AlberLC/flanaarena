@@ -23,8 +23,8 @@ def _get_champion_id_uuid_bidict() -> bidict[int, str] | None:
 
         js = requests.get(constants.CHAMPION_ID_TO_UUID_ENDPOINT).text
         matched_mappings = re.findall(r'ChampionIdToSeriesUuidMapping\s*=\s*({.*?})},', js)
-        current_split = _get_current_season_split()
-        _champion_id_uuid_bidict = bidict(ast.literal_eval(matched_mappings[current_split - 1]))
+        mapping_index = min(_get_current_season_split() - 1, len(matched_mappings) - 1)
+        _champion_id_uuid_bidict = bidict(ast.literal_eval(matched_mappings[mapping_index]))
 
     return _champion_id_uuid_bidict
 
