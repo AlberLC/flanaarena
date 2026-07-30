@@ -56,7 +56,7 @@ LCU_UX_STATE_URI = '/riotclient/ux-state/request'
 PALETTE_HIGHLIGHT_COLOR = (79, 114, 195)
 RYZE_ID = 13
 SEASON_SPLITS = 3
-VERSION = '1.1.2'
+VERSION = '1.1.3'
 
 # Paths
 IS_DEVELOPMENT = not getattr(sys, 'frozen', False)
