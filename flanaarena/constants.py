@@ -37,7 +37,7 @@ LCU_CLEAR_BORDERS_ENDPOINT_TEMPLATE = f'https://{LCU_HOST}:{{}}/lol-regalia/v2/c
 LCU_CLEAR_BORDERS_PAYLOAD = {
     'preferredCrestType': 'prestige',
     'preferredBannerType': 'blank',
-    'selectedPrestigeCrest': None
+    'selectedPrestigeCrest': 31
 }
 LCU_CLEAR_TOKENS_ENDPOINT_TEMPLATE = f'https://{LCU_HOST}:{{}}/lol-challenges/v1/update-player-preferences'
 LCU_CLEAR_TOKENS_PAYLOAD = {'challengeIds': []}
