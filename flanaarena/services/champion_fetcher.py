@@ -4,11 +4,10 @@ import constants
 from models.champion import Champion
 
 
-def fetch_champions() -> dict[int, Champion]:
-    session = requests.Session()
-
+def fetch_champions(session: requests.Session) -> dict[int, Champion]:
     champions = {}
-    for champion_data in fetch_champions_data().values():
+
+    for champion_data in session.get(constants.CHAMPIONS_ENDPOINT).json()['data'].values():
         id = int(champion_data['key'])
         name = champion_data['id']
         champions[id] = Champion(
@@ -23,7 +22,3 @@ def fetch_champions() -> dict[int, Champion]:
         )
 
     return champions
-
-
-def fetch_champions_data() -> dict[str, dict]:
-    return requests.get(constants.CHAMPIONS_ENDPOINT).json()['data']

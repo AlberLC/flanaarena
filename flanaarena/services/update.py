@@ -19,9 +19,9 @@ def _launch(main_path: str | Path, exe_path: str | Path) -> None:
         subprocess.Popen(exe_path)
 
 
-def check_update_state() -> UpdateState:
+def check_update_state(session: requests.Session) -> UpdateState:
     try:
-        response = requests.get(constants.FLANASERVER_API_VERSION_ENDPINT, timeout=constants.FLANASERVER_API_TIMEOUT)
+        response = session.get(constants.FLANASERVER_API_VERSION_ENDPINT, timeout=constants.FLANASERVER_API_TIMEOUT)
     except (requests.ConnectionError, requests.Timeout):
         return UpdateState.UNKNOWN
 
@@ -34,8 +34,8 @@ def check_update_state() -> UpdateState:
         return UpdateState.UPDATED
 
 
-def ensure_updated() -> bool:
-    if check_update_state() is UpdateState.OUTDATED:
+def ensure_updated(session: requests.Session) -> bool:
+    if check_update_state(session) is UpdateState.OUTDATED:
         launch_updater()
         return False
 
