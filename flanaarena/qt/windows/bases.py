@@ -27,7 +27,9 @@ class MovableWindow:
         self.is_moving = False
 
     def _move(self) -> None:
-        # noinspection PyUnresolvedReferences
+        if not self.last_position:
+            return
+
         self.move(self.pos() + self.mapFromGlobal(self.cursor().pos()) - self.last_position)
 
     def _on_mouse_left_press(self, event: QtGui.QMouseEvent) -> None:
@@ -40,8 +42,6 @@ class MovableWindow:
     def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
         # noinspection PyUnresolvedReferences
         super().mouseMoveEvent(event)
-        if self.last_position is None:
-            return
 
         self.is_moving = True
         self._on_mouse_move(event)
