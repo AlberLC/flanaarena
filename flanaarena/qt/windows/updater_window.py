@@ -14,7 +14,6 @@ class UpdaterWindow(MovableWindow, GuiWindow[UpdaterCentralWidget]):
 
         self.setWindowFlags(QtCore.Qt.WindowType.FramelessWindowHint)
         self.button_close.setStyleSheet('QPushButton:hover{background-color: darkred}')
-        self.show()
 
         self.button_close.clicked.connect(self.close)
 

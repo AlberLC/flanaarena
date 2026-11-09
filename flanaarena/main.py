@@ -12,7 +12,7 @@ def main() -> None:
 
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-        App(session).exec()
+        App(session).run()
 
 
 if __name__ == '__main__':

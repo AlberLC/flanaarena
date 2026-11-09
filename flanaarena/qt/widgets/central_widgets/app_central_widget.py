@@ -23,7 +23,6 @@ class AppCentralWidget(UiWidget):
     show_profile_widgets_signal = QtCore.Signal()
     loaded_signal = QtCore.Signal()
     set_champion_signal = QtCore.Signal(object)
-    close_signal = QtCore.Signal()
 
     def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
         super().__init__(constants.APP_UI_PATH, parent=parent)
@@ -44,7 +43,6 @@ class AppCentralWidget(UiWidget):
         self.show_profile_widgets_signal.connect(lambda: self._show_profile_widgets(True))
         self.loaded_signal.connect(self._on_loaded)
         self.set_champion_signal.connect(self._set_champion)
-        self.close_signal.connect(self.window().close)
 
     def _on_loaded(self) -> None:
         self._loading_movie.stop()

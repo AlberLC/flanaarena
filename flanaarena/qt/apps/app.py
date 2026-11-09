@@ -1,15 +1,11 @@
 import requests
 
-from controllers.app_controller import AppController
 from qt.apps.bases import GuiApp
+from qt.controllers.app_controller import AppController
 from qt.windows.app_window import AppWindow
 
 
-class App(GuiApp[AppWindow]):
+class App(GuiApp[AppWindow, AppController]):
     def __init__(self, session: requests.Session) -> None:
-        super().__init__(AppWindow)
-
-        controller = AppController(self, session)
-        controller.start()
-
-        self.window.show()
+        # noinspection bad-argument-type
+        super().__init__(AppWindow, lambda app, window: AppController(app, window, session))

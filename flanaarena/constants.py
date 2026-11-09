@@ -92,8 +92,8 @@ TICK_PATH = IMAGES_PATH / 'tick.svg'
 LOADING_GIFS_PATH = RESOURCES_PATH / 'loading_gifs'
 # Uis
 UIS_PATH = RESOURCES_PATH / 'uis'
-APP_UI_PATH = UIS_PATH / 'flanaarena.ui'
-UPDATER_APP_UI_PATH = UIS_PATH / 'updater.ui'
+APP_UI_PATH = UIS_PATH / 'app.ui'
+UPDATER_APP_UI_PATH = UIS_PATH / 'updater_app.ui'
 # Files
 CONFIG_PATH = RESOURCES_PATH / 'config.json'
 

@@ -15,7 +15,6 @@ class GuiWindow[T](QtWidgets.QMainWindow):
 
         self.setWindowTitle(constants.APP_NAME)
         self.setWindowIcon(self.icon)
-        # noinspection PyTypeChecker
         self.setCentralWidget(self.central_widget)
 
 
@@ -30,6 +29,7 @@ class MovableWindow:
         if not self.last_position:
             return
 
+        # noinspection unresolved-references
         self.move(self.pos() + self.mapFromGlobal(self.cursor().pos()) - self.last_position)
 
     def _on_mouse_left_press(self, event: QtGui.QMouseEvent) -> None:
@@ -38,26 +38,29 @@ class MovableWindow:
     def _on_mouse_move(self, _: QtGui.QMouseEvent) -> None:
         self._move()
 
-    # noinspection PyPep8Naming
+    # noinspection pep8-naming
     def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
-        # noinspection PyUnresolvedReferences
+        # noinspection unresolved-references
         super().mouseMoveEvent(event)
 
         self.is_moving = True
         self._on_mouse_move(event)
 
-    # noinspection PyPep8Naming
+    # noinspection pep8-naming
     def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:
-        # noinspection PyUnresolvedReferences
+        # noinspection unresolved-references
         super().mousePressEvent(event)
-        # noinspection PyUnresolvedReferences
+
+        # noinspection unresolved-references
         self.setFocus()
+
         if event.button() == QtCore.Qt.MouseButton.LeftButton:
             self._on_mouse_left_press(event)
 
-    # noinspection PyPep8Naming
+    # noinspection pep8-naming
     def mouseReleaseEvent(self, event: QtGui.QMouseEvent) -> None:
-        # noinspection PyUnresolvedReferences
+        # noinspection unresolved-references
         super().mouseReleaseEvent(event)
+
         self.is_moving = False
         self.last_position = None

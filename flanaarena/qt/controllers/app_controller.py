@@ -7,16 +7,17 @@ import requests
 
 import constants
 from models.champion import Champion
-from qt.apps.bases import GuiApp
+lazy from qt.apps.app import App
+from qt.controllers.bases import Controller
+from qt.windows.app_window import AppWindow
 from services import champion_fetcher
 from services.lcu import Lcu
 
 
-class AppController[T: GuiApp]:
-    def __init__(self, app: T, session: requests.Session) -> None:
-        self._app = app
-        self._window = self._app.window
-        self._gui = self._app.gui
+class AppController(Controller['App', AppWindow]):
+    def __init__(self, app: App, window: AppWindow, session: requests.Session) -> None:
+        super().__init__(app, window)
+
         self._session = session
         self._lcu = Lcu(self._session)
         self._champions: dict[int, Champion] = {}
@@ -97,7 +98,7 @@ class AppController[T: GuiApp]:
                     self._was_ryze_selected = True
                     self._lcu.select_champion(event_data['cellId'], constants.RYZE_ID)
 
-        self._gui.close_signal.emit()
+        self._app.close_signal.emit()
 
     def _save_config(self) -> None:
         constants.CONFIG_PATH.write_text(json.dumps(

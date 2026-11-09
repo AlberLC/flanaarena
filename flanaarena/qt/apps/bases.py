@@ -1,15 +1,19 @@
 from collections.abc import Callable
+from typing import Any, Self
 
 from PySide6 import QtCore, QtGui, QtWidgets
 
 import constants
+lazy from qt.controllers.bases import Controller
 
 
 class BlueDarkApp(QtWidgets.QApplication):
-    # noinspection PyArgumentList
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
+        self._set_style()
+
+    def _set_style(self) -> None:
         palette = self.palette()
 
         palette.setColor(QtGui.QPalette.ColorGroup.Disabled, QtGui.QPalette.ColorRole.Window, QtGui.QColor(30, 30, 30))
@@ -99,15 +103,31 @@ class BlueDarkApp(QtWidgets.QApplication):
         self.setPalette(palette)
 
 
-class GuiApp[T](BlueDarkApp):
+class GuiApp[TWindow: QtWidgets.QMainWindow, TController: Controller](BlueDarkApp):
     close_signal = QtCore.Signal()
 
-    def __init__(self, window_factory: Callable[[], T], *args, **kwargs) -> None:
+    def __init__(
+        self,
+        window_factory: Callable[[], TWindow],
+        controller_factory: Callable[[Self, TWindow], TController],
+        *args: Any,
+        **kwargs: Any
+    ) -> None:
         super().__init__(*args, **kwargs)
-        self.window = window_factory()
-        self.gui = self.window.central_widget
+
+        self._window = window_factory()
+        self._controller = controller_factory(self, self._window)
 
         self._connect_signals()
 
     def _connect_signals(self) -> None:
-        self.close_signal.connect(self.window.close)
+        self.close_signal.connect(self.quit, QtCore.Qt.ConnectionType.QueuedConnection)
+
+    def _start(self) -> None:
+        self._controller.start()
+
+    def run(self) -> int:
+        self._start()
+        self._window.show()
+
+        return self.exec()
