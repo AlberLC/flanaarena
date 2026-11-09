@@ -1,13 +1,20 @@
 from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 
 from PySide6 import QtCore, QtGui, QtWidgets
 
 import constants
 
 
-class GuiWindow[T](QtWidgets.QMainWindow):
-    def __init__(self, icon_path: str | Path, central_widget_factory: Callable[[], T], *args, **kwargs) -> None:
+class GuiWindow[TCentralWidget](QtWidgets.QMainWindow):
+    def __init__(
+        self,
+        icon_path: str | Path,
+        central_widget_factory: Callable[[], TCentralWidget],
+        *args: Any,
+        **kwargs: Any
+    ) -> None:
         super().__init__(*args, **kwargs)
 
         self.icon = QtGui.QIcon(str(icon_path))
@@ -19,7 +26,7 @@ class GuiWindow[T](QtWidgets.QMainWindow):
 
 
 class MovableWindow:
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
         self.last_position: QtCore.QPoint | None = None

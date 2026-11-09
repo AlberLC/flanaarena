@@ -8,7 +8,7 @@ lazy from qt.controllers.bases import Controller
 
 
 class BlueDarkApp(QtWidgets.QApplication):
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
         self._set_style()
